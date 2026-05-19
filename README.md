@@ -1,78 +1,71 @@
-Hidden Markov Model (HMM) Analysis
-Overview
-This project demonstrates the implementation and analysis of a Hidden Markov Model (HMM) using Python and Jupyter Notebook.
+# Viterbi Algorithm Implementation for Hidden Markov Models
 
-The notebook focuses on probabilistic sequence modeling, hidden-state estimation, and transition-based inference techniques commonly used in computational biology, machine learning, and time-series analysis.
+A comprehensive implementation of the Viterbi algorithm for finding the most likely sequence of hidden states in a Hidden Markov Model (HMM), applied to genomic sequence analysis.
 
-Objectives
-The project aims to:
+## Overview
 
-Understand the structure of Hidden Markov Models
-Model hidden and observable states
-Compute transition and emission probabilities
-Analyze sequential data probabilistically
-Visualize state-based predictions and inference
-Key Concepts Covered
-Hidden States
-Hidden states represent internal system conditions that cannot be observed directly.
+This project demonstrates the Viterbi algorithm, a dynamic programming approach to solve the decoding problem in Hidden Markov Models. The implementation uses genomic sequences as an example, identifying hidden states (exons, introns, splice sites, etc.) from observed DNA nucleotide sequences.
 
-Observable States
-Observable outputs are generated probabilistically from hidden states.
+## Features
 
-Transition Probabilities
-These probabilities describe how the system moves between hidden states over time.
+- **Viterbi Algorithm**: Efficient dynamic programming implementation to find the maximum likelihood path through an HMM
+- **Log-scale Probability Calculations**: Uses log probabilities to avoid numerical underflow issues
+- **Trace-back Mechanism**: Reconstructs the optimal state sequence from the Viterbi matrices
+- **Genomic Application**: Configured with biological transition and emission probabilities for DNA sequence analysis
 
-Emission Probabilities
-Emission probabilities determine the likelihood of observing specific outputs from a hidden state.
+## Project Structure
 
-Sequence Inference
-Dynamic-programming methods are used to estimate hidden-state paths and sequence likelihoods.
+- `ViterbiHMM.ipynb` - Main Jupyter notebook containing:
+  - Model configuration (states and probabilities)
+  - Viterbi algorithm implementation
+  - Test cases with various state paths
+  - Visualization of the Viterbi matrix
 
-Technologies Used
-Python
-NumPy
-Pandas
-Matplotlib
-Jupyter Notebook
-Workflow Summary
-1. Data and Parameter Initialization
-The notebook initializes:
+## Model Configuration
 
-Hidden states
-Observation symbols
-Transition matrices
-Emission matrices
-Initial state probabilities
-2. Probabilistic Modeling
-The Hidden Markov Model structure is constructed using transition and emission relationships.
+### Hidden States
+- `s` - Start state
+- `E` - Exon (protein-coding region)
+- `5` - 5' splice site
+- `I` - Intron (non-coding region)
+- `e` - End state
 
-3. Sequence Processing
-Observed sequences are processed to compute:
+### States and Transitions
 
-Forward probabilities
-Likelihood estimates
-Hidden-state predictions
-4. Visualization
-Plots and formatted outputs help interpret probabilistic transitions and sequence behavior.
+The model includes:
+- **State Transition Probabilities**: Defined as a 5×5 matrix specifying the probability of transitioning from one state to another
+- **Emission Probabilities**: Define the likelihood of observing each nucleotide (A, C, G, T) in each state
 
-Applications of HMMs
-Hidden Markov Models are widely applied in:
+## Key Functions
 
-Bioinformatics
-Gene prediction
-Speech recognition
-Natural language processing
-Financial forecasting
-Time-series analysis
-Files Included
-File	Description
-hmmviterbi.ipynb	Main notebook containing HMM implementation and analysis
-README.md	Project documentation
-Learning Outcomes
-This project helps build understanding of:
+### `setup_viterbi(query_sequence)`
+Initializes the Viterbi value and trace matrices for a given sequence.
+- Creates a matrix of dimensions (num_states × seq_len)
+- Fills the first column based on initial state and emission probabilities
+- Initializes the trace matrix for backtracking
 
-Sequential probabilistic modeling
-State-transition systems
-Dynamic programming in ML
-Uncertainty modeling
-Hidden-state inference techniques
+### `viterbi_forward(query_sequence, viterbi_value_matrix, viterbi_trace_matrix)`
+Performs the forward pass of the Viterbi algorithm.
+- Iterates through each position in the sequence
+- For each state, calculates the maximum probability path from previous states
+- Stores the best previous state for trace-back
+
+### `traceback_best_state_path(viterbi_value_matrix, viterbi_trace_matrix)`
+Reconstructs the optimal state sequence.
+- Finds the state with the highest probability at the sequence end
+- Traces back through the trace matrix to build the complete path
+- Converts state indices to state names
+
+### `get_log_prob_for_state_path(state_path, query_sequence)`
+Calculates the log probability for a given state path and sequence combination.
+
+## Example Usage
+
+```python
+# Setup and run Viterbi algorithm
+viterbi_value_matrix, viterbi_trace_matrix = setup_viterbi(query_sequence)
+viterbi_forward(query_sequence, viterbi_value_matrix, viterbi_trace_matrix)
+best_state_path = traceback_best_state_path(viterbi_value_matrix, viterbi_trace_matrix)
+
+print(best_state_path)
+# Output: ['E', 'E', 'E', ..., 'E'] (most likely state sequence)
